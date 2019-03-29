@@ -44,6 +44,7 @@ public class BaseFragment2 extends Fragment {
     private ArrayList<itemdata> list = new ArrayList<itemdata>();
     //自定义recyclerveiw的适配器
     private MyRecyclerViewAdapter adapter;
+    private ImageView iv;
 
     public static BaseFragment2 newInstance(String info) {
         Bundle args = new Bundle();
@@ -69,11 +70,11 @@ public class BaseFragment2 extends Fragment {
         initData();
 
         recyclerView = (RecyclerView)view.findViewById(R.id.recyclerView);
-
+        iv= (ImageView)view.findViewById(R.id.img_large);
         //RecyclerView.LayoutManager layoutManager=new LinearLayoutManager(this.getActivity(),LinearLayoutManager.VERTICAL,false);
 
-        RecyclerView.LayoutManager l1=new LinearLayoutManager(getActivity(),LinearLayoutManager.VERTICAL,false);
-        recyclerView.setLayoutManager(l1);//控制布局为LinearLayout或者是GridView或者是瀑布流布局
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(),LinearLayoutManager.VERTICAL,false));//控制布局为LinearLayout或者是GridView或者是瀑布流布局
         adapter = new MyRecyclerViewAdapter(list,getActivity());
         recyclerView.setAdapter(adapter);
         // 设置item及item中控件的点击事件
@@ -135,6 +136,15 @@ public class BaseFragment2 extends Fragment {
                         break;
                     case R.id.btn_refuse:
                         Toast.makeText(getActivity(), "你点击了拒绝按钮" + (position + 1), Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.iv_icon:
+
+                        //TextView tv= (TextView)v.findViewById(R.id.tv_username);
+                        //String a = tv.getText().toString();
+
+                        Toast.makeText(getActivity(), adapter.getItemData(position).username , Toast.LENGTH_SHORT).show();
+                        //recyclerView.getChildAt(position).findViewById(R.id.tv_username);
+                        //iv.setImageResource(R.drawable.ic_dashboard_black_24dp);
                         break;
                     default:
                         Toast.makeText(getActivity(), "你点击了item按钮" + (position + 1), Toast.LENGTH_SHORT).show();

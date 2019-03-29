@@ -46,6 +46,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         holder.itemView.setTag(position);
         holder.btnAgree.setTag(position);
         holder.btnRefuse.setTag(position);
+        holder.ivIcon.setTag(position);
     }
 
     //有多少个item？
@@ -53,6 +54,12 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     public int getItemCount() {
         return list.size();
     }
+
+
+    public itemdata getItemData(int position){
+        return list.get(position);
+    }
+
 
     public void addData(int position) {
 //      在list中添加数据，并通知条目加入一条
@@ -80,6 +87,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
             itemView.setOnClickListener(MyRecyclerViewAdapter.this);
             btnAgree.setOnClickListener(MyRecyclerViewAdapter.this);
             btnRefuse.setOnClickListener(MyRecyclerViewAdapter.this);
+            ivIcon.setOnClickListener(MyRecyclerViewAdapter.this);
         }
 
     }
