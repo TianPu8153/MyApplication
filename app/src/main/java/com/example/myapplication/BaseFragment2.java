@@ -1,11 +1,16 @@
 package com.example.myapplication;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.myapplication.entity.itemdata;
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.scwang.smartrefresh.header.MaterialHeader;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.constant.SpinnerStyle;
@@ -33,18 +39,23 @@ import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import java.util.ArrayList;
 import java.util.List;
 /**
- * Created by bruce on 2016/11/1.
- * BaseFragment
+ * Created by ding on 2019/4/1.
+ * BaseFragment2
+ * 主要功能：
+ * 在fragment中使用recyclerview的适配器，显示列表，允许加载、刷新功能
+ * 显示网络图片，点击可全屏显示
+ * 从网路中获取数据，list.add后带相关参数（或者在MyREcyclerViewAdapter中获取网络数据）
  */
 
 public class BaseFragment2 extends Fragment {
     private View view;//定义view用来设置fragment的layout
     public RecyclerView recyclerView;//定义RecyclerView
-    //定义以goodsentity实体类为对象的数据集合
+    //定义以itemdata实体类为对象的数据集合
     private ArrayList<itemdata> list = new ArrayList<itemdata>();
     //自定义recyclerveiw的适配器
     private MyRecyclerViewAdapter adapter;
-    private ImageView iv;
+
+
 
     public static BaseFragment2 newInstance(String info) {
         Bundle args = new Bundle();
@@ -66,12 +77,18 @@ public class BaseFragment2 extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.result_show, container,false);
-
+        Fresco.initialize(getActivity());
         initData();
 
         recyclerView = (RecyclerView)view.findViewById(R.id.recyclerView);
-        iv= (ImageView)view.findViewById(R.id.img_large);
+
         //RecyclerView.LayoutManager layoutManager=new LinearLayoutManager(this.getActivity(),LinearLayoutManager.VERTICAL,false);
+
+
+
+
+
+
 
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(),LinearLayoutManager.VERTICAL,false));//控制布局为LinearLayout或者是GridView或者是瀑布流布局
@@ -109,18 +126,29 @@ public class BaseFragment2 extends Fragment {
 
 
 
+
+
+
+
         //模拟数据
 
         return view;
     }
 
     private void initData() {
+        //这里应该先从网上获取数据，然后list.add
         list = new ArrayList<>();
-        list.add(new itemdata("username1", "让我们成为好友吧1！"));
-        list.add(new itemdata("username2", "让我们成为好友吧2！"));
-        list.add(new itemdata("username3", "让我们成为好友吧3！"));
-        list.add(new itemdata("username4", "让我们成为好友吧4！"));
-        list.add(new itemdata("username5", "让我们成为好友吧5！"));
+        list.add(new itemdata("username01", "让我们成为好友吧1！","http://www.pptbz.com/pptpic/UploadFiles_6909/201203/2012031220134655.jpg"));
+        list.add(new itemdata("username02", "让我们成为好友吧2！","http://img3.imgtn.bdimg.com/it/u=3388806012,4159429573&fm=26&gp=0.jpg"));
+        list.add(new itemdata("username03", "让我们成为好友吧3！","http://img5.imgtn.bdimg.com/it/u=3866142909,987137952&fm=26&gp=0.jpg"));
+        list.add(new itemdata("username04", "让我们成为好友吧4！","http://img2.imgtn.bdimg.com/it/u=1181110699,1748240089&fm=26&gp=0.jpg"));
+        list.add(new itemdata("username05", "让我们成为好友吧5！","http://img3.imgtn.bdimg.com/it/u=3751826293,3990589182&fm=26&gp=0.jpg"));
+
+        list.add(new itemdata("username01", "让我们成为好友吧1！","http://www.pptbz.com/pptpic/UploadFiles_6909/201203/2012031220134655.jpg"));
+        list.add(new itemdata("username02", "让我们成为好友吧2！","http://img3.imgtn.bdimg.com/it/u=3388806012,4159429573&fm=26&gp=0.jpg"));
+        list.add(new itemdata("username03", "让我们成为好友吧3！","http://img5.imgtn.bdimg.com/it/u=3866142909,987137952&fm=26&gp=0.jpg"));
+        list.add(new itemdata("username04", "让我们成为好友吧4！","http://img2.imgtn.bdimg.com/it/u=1181110699,1748240089&fm=26&gp=0.jpg"));
+        list.add(new itemdata("username05", "让我们成为好友吧5！","http://img3.imgtn.bdimg.com/it/u=3751826293,3990589182&fm=26&gp=0.jpg"));
 
     }
 
@@ -141,8 +169,10 @@ public class BaseFragment2 extends Fragment {
 
                         //TextView tv= (TextView)v.findViewById(R.id.tv_username);
                         //String a = tv.getText().toString();
-
-                        Toast.makeText(getActivity(), adapter.getItemData(position).username , Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(getActivity(), showImg.class);
+                        intent.putExtra("imgsrc",adapter.getItemData(position).imgsrc);
+                        startActivity(intent);
+                        //Toast.makeText(getActivity(), adapter.getItemData(position).username , Toast.LENGTH_SHORT).show();
                         //recyclerView.getChildAt(position).findViewById(R.id.tv_username);
                         //iv.setImageResource(R.drawable.ic_dashboard_black_24dp);
                         break;

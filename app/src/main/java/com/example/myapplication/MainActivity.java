@@ -125,8 +125,10 @@ public class MainActivity extends AppCompatActivity  {
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(BaseFragment.newInstance("第一页"));
-        adapter.addFragment(BaseFragment.newInstance("第二页"));
+
         adapter.addFragment(BaseFragment2.newInstance("第三页"));
+        adapter.addFragment(BaseFragment.newInstance("第二页"));
+
 //        adapter.addFragment(BaseFragment.newInstance("第四页"));
         viewPager.setAdapter(adapter);
     }

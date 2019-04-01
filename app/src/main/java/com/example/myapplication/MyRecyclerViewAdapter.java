@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,6 +13,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.myapplication.entity.itemdata;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.view.SimpleDraweeView;
 
 
 import java.util.List;
@@ -32,6 +35,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_item,parent,false);
+        Fresco.initialize(context);
         return new MyViewHolder(view);
     }
 
@@ -47,6 +51,8 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
         holder.btnAgree.setTag(position);
         holder.btnRefuse.setTag(position);
         holder.ivIcon.setTag(position);
+        Uri uri = Uri.parse(data.getImgsrc());
+        holder.ivIcon.setImageURI(uri);
     }
 
     //有多少个item？
@@ -62,15 +68,17 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
 
 
     public void addData(int position) {
-//      在list中添加数据，并通知条目加入一条
-        list.add(position,new itemdata("username"+position, "让我们成为好友吧！"+position));
+//      在list中添加数据，并通知条目加入一条,这里要改
+        //这里应该先从网络中获取itemdata，然后将itemdata放入recyclerview_item中
+        list.add(position,new itemdata("username"+position, "应该先从网上获取数据"+position,"http://www.pptbz.com/pptpic/UploadFiles_6909/201203/2012031220134655.jpg"));
         //添加动画
         notifyItemInserted(position);
     }
 
     //创建MyViewHolder继承RecyclerView.ViewHolder
     public class MyViewHolder extends RecyclerView.ViewHolder{
-        private ImageView ivIcon;
+        private SimpleDraweeView ivIcon;
+        //private ImageView ivIcon;
         private TextView tvUsername,tvMessage;
         private Button btnAgree,btnRefuse;
 
@@ -78,6 +86,8 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
             super(itemView);
 
             ivIcon = itemView.findViewById(R.id.iv_icon);
+//            Uri uri = Uri.parse("http://www.pptbz.com/pptpic/UploadFiles_6909/201203/2012031220134655.jpg");
+//            ivIcon.setImageURI(uri);
             tvUsername = itemView.findViewById(R.id.tv_username);
             tvMessage = itemView.findViewById(R.id.tv_message);
             btnAgree = itemView.findViewById(R.id.btn_agree);

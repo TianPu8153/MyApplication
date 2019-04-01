@@ -117,26 +117,10 @@ public class ShowResult extends AppCompatActivity {
 
     private void initData() {
         list = new ArrayList<>();
-        list.add(new itemdata("username1", "让我们成为好友吧1！"));
-        list.add(new itemdata("username2", "让我们成为好友吧2！"));
-        list.add(new itemdata("username3", "让我们成为好友吧3！"));
-        list.add(new itemdata("username4", "让我们成为好友吧4！"));
-        list.add(new itemdata("username5", "让我们成为好友吧5！"));
-        list.add(new itemdata("username6", "让我们成为好友吧1！"));
-        list.add(new itemdata("username7", "让我们成为好友吧2！"));
-        list.add(new itemdata("username8", "让我们成为好友吧3！"));
-        list.add(new itemdata("username9", "让我们成为好友吧4！"));
-        list.add(new itemdata("username10", "让我们成为好友吧10！"));
-        list.add(new itemdata("username12", "让我们成为好友吧11！"));
-        list.add(new itemdata("username12", "让我们成为好友吧12！"));
-        list.add(new itemdata("username13", "让我们成为好友吧13！"));
-        list.add(new itemdata("username14", "让我们成为好友吧14！"));
-        list.add(new itemdata("username15", "让我们成为好友吧15！"));
-        list.add(new itemdata("username16", "让我们成为好友吧16！"));
-        list.add(new itemdata("username17", "让我们成为好友吧17！"));
-        list.add(new itemdata("username18", "让我们成为好友吧18！"));
-        list.add(new itemdata("username19", "让我们成为好友吧19！"));
-        list.add(new itemdata("username20", "让我们成为好友吧20！"));
+        list.add(new itemdata("username1", "让我们成为好友吧1！","http://www.pptbz.com/pptpic/UploadFiles_6909/201203/2012031220134655.jpg"));
+        list.add(new itemdata("username2", "让我们成为好友吧2！","http://www.pptbz.com/pptpic/UploadFiles_6909/201203/2012031220134655.jpg"));
+        list.add(new itemdata("username3", "让我们成为好友吧3！","http://www.pptbz.com/pptpic/UploadFiles_6909/201203/2012031220134655.jpg"));
+
     }
 
     private MyRecyclerViewAdapter.OnItemClickListener MyItemClickListener = new MyRecyclerViewAdapter.OnItemClickListener() {
