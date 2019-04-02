@@ -3,6 +3,7 @@ package com.example.myapplication;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -11,9 +12,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.Display;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -76,29 +79,17 @@ public class BaseFragment2 extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        //初始化View
         View view = inflater.inflate(R.layout.result_show, container,false);
         Fresco.initialize(getActivity());
-        initData();
-
+        initData();//初始化数据
         recyclerView = (RecyclerView)view.findViewById(R.id.recyclerView);
-
         //RecyclerView.LayoutManager layoutManager=new LinearLayoutManager(this.getActivity(),LinearLayoutManager.VERTICAL,false);
-
-
-
-
-
-
-
-
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(),LinearLayoutManager.VERTICAL,false));//控制布局为LinearLayout或者是GridView或者是瀑布流布局
         adapter = new MyRecyclerViewAdapter(list,getActivity());
         recyclerView.setAdapter(adapter);
         // 设置item及item中控件的点击事件
         adapter.setOnItemClickListener(MyItemClickListener);
-
-
-
         RefreshLayout refreshLayout = view.findViewById(R.id.refreshLayout);
         refreshLayout.setRefreshHeader(new MaterialHeader(getActivity()));
         refreshLayout.setFooterHeight(30);
@@ -119,19 +110,9 @@ public class BaseFragment2 extends Fragment {
                 adapter.addData(list.size());
                 Toast.makeText(getActivity(),"已加载",Toast.LENGTH_SHORT).show();
                 refreshlayout.finishLoadMore();//传入false表示加载失败
-
-
             }
         });
-
-
-
-
-
-
-
         //模拟数据
-
         return view;
     }
 
@@ -143,21 +124,16 @@ public class BaseFragment2 extends Fragment {
         list.add(new itemdata("username03", "让我们成为好友吧3！","http://img5.imgtn.bdimg.com/it/u=3866142909,987137952&fm=26&gp=0.jpg"));
         list.add(new itemdata("username04", "让我们成为好友吧4！","http://img2.imgtn.bdimg.com/it/u=1181110699,1748240089&fm=26&gp=0.jpg"));
         list.add(new itemdata("username05", "让我们成为好友吧5！","http://img3.imgtn.bdimg.com/it/u=3751826293,3990589182&fm=26&gp=0.jpg"));
-
         list.add(new itemdata("username01", "让我们成为好友吧1！","http://www.pptbz.com/pptpic/UploadFiles_6909/201203/2012031220134655.jpg"));
         list.add(new itemdata("username02", "让我们成为好友吧2！","http://img3.imgtn.bdimg.com/it/u=3388806012,4159429573&fm=26&gp=0.jpg"));
         list.add(new itemdata("username03", "让我们成为好友吧3！","http://img5.imgtn.bdimg.com/it/u=3866142909,987137952&fm=26&gp=0.jpg"));
         list.add(new itemdata("username04", "让我们成为好友吧4！","http://img2.imgtn.bdimg.com/it/u=1181110699,1748240089&fm=26&gp=0.jpg"));
         list.add(new itemdata("username05", "让我们成为好友吧5！","http://img3.imgtn.bdimg.com/it/u=3751826293,3990589182&fm=26&gp=0.jpg"));
-
     }
-
-
         private MyRecyclerViewAdapter.OnItemClickListener MyItemClickListener = new MyRecyclerViewAdapter.OnItemClickListener() {
-
             @Override
             public void onItemClick(View v, MyRecyclerViewAdapter.ViewName viewName, int position) {
-//viewName可区分item及item内部控件
+                //viewName可区分item及item内部控件
                 switch (v.getId()) {
                     case R.id.btn_agree:
                         Toast.makeText(getActivity(), "你点击了同意按钮" + (position + 1), Toast.LENGTH_SHORT).show();
@@ -166,15 +142,10 @@ public class BaseFragment2 extends Fragment {
                         Toast.makeText(getActivity(), "你点击了拒绝按钮" + (position + 1), Toast.LENGTH_SHORT).show();
                         break;
                     case R.id.iv_icon:
-
-                        //TextView tv= (TextView)v.findViewById(R.id.tv_username);
-                        //String a = tv.getText().toString();
+                        //点击查看大图
                         Intent intent = new Intent(getActivity(), showImg.class);
                         intent.putExtra("imgsrc",adapter.getItemData(position).imgsrc);
                         startActivity(intent);
-                        //Toast.makeText(getActivity(), adapter.getItemData(position).username , Toast.LENGTH_SHORT).show();
-                        //recyclerView.getChildAt(position).findViewById(R.id.tv_username);
-                        //iv.setImageResource(R.drawable.ic_dashboard_black_24dp);
                         break;
                     default:
                         Toast.makeText(getActivity(), "你点击了item按钮" + (position + 1), Toast.LENGTH_SHORT).show();
@@ -182,8 +153,28 @@ public class BaseFragment2 extends Fragment {
                 }
             }
             @Override
-            public void onItemLongClick(View v) {
-
+            public void onItemLongClick(View v, MyRecyclerViewAdapter.ViewName viewName, final int position) {
+                //长按显示删除按钮，点击删除item
+                Toast.makeText(getActivity(), "position:" + (position), Toast.LENGTH_SHORT).show();
+                View popupView = LayoutInflater.from(getActivity()).inflate(R.layout.layout_pop, null);
+                final PopupWindow popupWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.WRAP_CONTENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT, true);
+                popupWindow.setBackgroundDrawable(new BitmapDrawable());
+                popupView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+                int popupWidth = popupView.getMeasuredWidth();
+                int popupHeight =  popupView.getMeasuredHeight();
+                int[] location = new int[2];
+                v.getLocationOnScreen(location);
+                popupWindow.showAtLocation(v, Gravity.NO_GRAVITY, (location[0]+v.getWidth()/2)-popupWidth/2,
+                        location[1]-popupHeight+30);
+                Button button=popupView.findViewById(R.id.bt_r);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        adapter.delData(position);
+                        popupWindow.dismiss();
+                    }
+                });
             }
         };
 

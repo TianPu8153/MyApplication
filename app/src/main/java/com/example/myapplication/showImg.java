@@ -76,7 +76,6 @@ public class showImg extends AppCompatActivity {
         GenericDraweeHierarchy hierarchy =draweeView.getHierarchy();
         hierarchy.setActualImageScaleType(ScalingUtils.ScaleType.FIT_CENTER);//设置图片保持原比例居中显示
         draweeView.setImageURI(uri);
-//        imageDownloader.download( imgsrc,img);
         Toast toast = Toast.makeText(this, "点击图片即可返回",Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.BOTTOM, 0, 10);
         toast.show();
@@ -86,4 +85,5 @@ public class showImg extends AppCompatActivity {
             }
         });
     }
+
 }

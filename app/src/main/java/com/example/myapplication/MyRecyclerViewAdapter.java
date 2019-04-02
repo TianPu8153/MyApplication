@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.myapplication.entity.itemdata;
 import com.facebook.drawee.backends.pipeline.Fresco;
@@ -71,9 +72,24 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
 //      在list中添加数据，并通知条目加入一条,这里要改
         //这里应该先从网络中获取itemdata，然后将itemdata放入recyclerview_item中
         list.add(position,new itemdata("username"+position, "应该先从网上获取数据"+position,"http://www.pptbz.com/pptpic/UploadFiles_6909/201203/2012031220134655.jpg"));
+
         //添加动画
+
         notifyItemInserted(position);
     }
+
+
+    public void delData(int position) {
+//      在list中添加数据，并通知条目加入一条,这里要改
+        //这里应该先从网络中获取itemdata，然后将itemdata放入recyclerview_item中
+        list.remove(position);
+        //添加动画
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position,list.size());
+
+    }
+
+
 
     //创建MyViewHolder继承RecyclerView.ViewHolder
     public class MyViewHolder extends RecyclerView.ViewHolder{
@@ -95,6 +111,14 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
 
             // 为ItemView添加点击事件
             itemView.setOnClickListener(MyRecyclerViewAdapter.this);
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    int position = (int) v.getTag();
+                    mOnItemClickListener.onItemLongClick(v, ViewName.PRACTISE, position);
+                    return false;
+                }
+            });
             btnAgree.setOnClickListener(MyRecyclerViewAdapter.this);
             btnRefuse.setOnClickListener(MyRecyclerViewAdapter.this);
             ivIcon.setOnClickListener(MyRecyclerViewAdapter.this);
@@ -113,7 +137,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     //自定义一个回调接口来实现Click和LongClick事件
     public interface OnItemClickListener  {
         void onItemClick(View v, ViewName viewName, int position);
-        void onItemLongClick(View v);
+        void onItemLongClick(View v, ViewName viewName, int position);
     }
 
     private OnItemClickListener mOnItemClickListener;//声明自定义的接口
@@ -122,6 +146,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
     public void setOnItemClickListener(OnItemClickListener  listener) {
         this.mOnItemClickListener  = listener;
     }
+
 
     @Override
     public void onClick(View v) {
@@ -137,6 +162,7 @@ public class MyRecyclerViewAdapter extends RecyclerView.Adapter<MyRecyclerViewAd
             }
         }
     }
+
 }
 
 

@@ -142,7 +142,7 @@ public class ShowResult extends AppCompatActivity {
         }
 
         @Override
-        public void onItemLongClick(View v) {
+        public void onItemLongClick(View v, MyRecyclerViewAdapter.ViewName viewName, int position) {
 
         }
     };
