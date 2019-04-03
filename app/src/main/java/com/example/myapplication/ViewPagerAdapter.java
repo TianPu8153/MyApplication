@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by bruce on 2016/11/1.
+ * Created by ding on 2019/4/1.
  * ViewPagerAdapter
  */
 
