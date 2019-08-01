@@ -1,0 +1,216 @@
+package com.example.myapplication;
+
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
+import android.view.Display;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.PopupWindow;
+import android.widget.TextView;
+import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.myapplication.entity.event;
+import com.example.myapplication.entity.itemdata;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.scwang.smartrefresh.header.MaterialHeader;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.constant.SpinnerStyle;
+import com.scwang.smartrefresh.layout.footer.FalsifyFooter;
+import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+
+
+
+
+import java.util.ArrayList;
+import java.util.List;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+
+import java.io.FileOutputStream;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Created by bruce on 2016/11/1.
+ * BaseFragment
+ */
+
+public class BaseFragment3 extends Fragment {
+
+    private View view;//定义view用来设置fragment的layout
+    public RecyclerView recyclerView;//定义RecyclerView
+    //定义以itemdata实体类为对象的数据集合
+    private ArrayList<event> list = new ArrayList<event>();
+    //自定义recyclerveiw的适配器
+    private MyRecyclerViewAdapter2 adapter;
+
+    private DatabaseHelper dbHelper;
+    private SQLiteDatabase db;
+
+    public static BaseFragment3 newInstance(String info) {
+        Bundle args = new Bundle();
+        BaseFragment3 fragment = new BaseFragment3();
+        args.putString("info", info);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.activity_db, null);
+        dbHelper=new DatabaseHelper(getActivity(),"event.db",null,1);
+        db=dbHelper.getReadableDatabase();
+        recyclerView =view.findViewById(R.id.recyclerView2);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(),LinearLayoutManager.VERTICAL,false));//控制布局为LinearLayout或者是GridView或者是瀑布流布局
+        adapter = new MyRecyclerViewAdapter2(list,getActivity());
+        recyclerView.setAdapter(adapter);
+        adapter.setOnItemClickListener(MyItemClickListener);
+        RefreshLayout refreshLayout = view.findViewById(R.id.refreshLayout);
+        refreshLayout.setRefreshHeader(new MaterialHeader(getActivity()));
+        refreshLayout.setFooterHeight(30);
+        refreshLayout.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshlayout) {
+                refreshlayout.finishRefresh();//传入false表示刷新失败
+                Toast.makeText(getActivity(),"已刷新",Toast.LENGTH_SHORT).show();
+            }
+        });
+        refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
+            @Override
+            public void onLoadMore(RefreshLayout refreshlayout) {
+                adapter.addData(list.size(),new event(0,"待办事项1","2019-08-01 15:48:00",1,1,""));
+                adapter.addData(list.size(),new event(0,"待办事项2","2019-08-01 15:48:00",1,1,""));
+                adapter.addData(list.size(),new event(0,"待办事项3","2019-08-01 15:48:00",2,1,""));
+                adapter.addData(list.size(),new event(0,"待办事项4","2019-08-01 15:48:00",2,1,""));
+                adapter.addData(list.size(),new event(0,"待办事项5","2019-08-01 15:48:00",2,1,""));
+                adapter.addData(list.size(),new event(0,"待办事项6","2019-08-01 15:48:00",1,1,""));
+                adapter.addData(list.size(),new event(0,"待办事项7","2019-08-01 15:48:00",1,1,""));
+                adapter.addData(list.size(),new event(0,"待办事项8","2019-08-01 15:48:00",1,1,""));
+                Toast.makeText(getActivity(),"已加载",Toast.LENGTH_SHORT).show();
+                refreshlayout.finishLoadMore();//传入false表示加载失败
+            }
+        });
+
+        return view;
+    }
+
+
+
+    public void check(){
+        Cursor cursor =db.rawQuery("select * from event where level=?",new String[]{"1"});
+        while(cursor.moveToNext())
+        {
+            int id  = cursor.getInt(cursor.getColumnIndex("id"));
+            String name = cursor.getString(cursor.getColumnIndex("name"));
+            String date = cursor.getString(cursor.getColumnIndex("date"));
+            int state = cursor.getInt(cursor.getColumnIndex("state"));
+            int level = cursor.getInt(cursor.getColumnIndex("level"));
+            Log.d("data:",id+name+date+state+level);
+        }
+        cursor.close();
+
+    }
+    public void add(){
+        ContentValues values = new ContentValues();
+        values.put("name","事件名称");
+        values.put("date","2019-08-01 10:08:23");
+        values.put("state",1);
+        values.put("level",1);
+        db.insert("event",null,values);
+
+    }
+
+
+    private MyRecyclerViewAdapter2.OnItemClickListener MyItemClickListener = new MyRecyclerViewAdapter2.OnItemClickListener() {
+        @Override
+        public void onItemClick(View v, MyRecyclerViewAdapter2.ViewName viewName, int position) {
+            //viewName可区分item及item内部控件
+            switch (v.getId()) {
+                case R.id.btn_agree:
+                    Toast.makeText(getActivity(), "你点击了同意按钮" + (position + 1), Toast.LENGTH_SHORT).show();
+                    break;
+                case R.id.btn_refuse:
+                    Toast.makeText(getActivity(), "你点击了拒绝按钮" + (position + 1), Toast.LENGTH_SHORT).show();
+                    break;
+                case R.id.iv_icon:
+                    //点击查看大图
+                    Intent intent = new Intent(getActivity(), showImg.class);
+                    intent.putExtra("imgsrc",adapter.getItemData(position).imgsrc);
+                    startActivity(intent);
+                    break;
+                default:
+                    Toast.makeText(getActivity(), "你点击了item按钮" + (position + 1), Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        }
+        @Override
+        public void onItemLongClick(View v, MyRecyclerViewAdapter2.ViewName viewName, final int position) {
+            //长按显示删除按钮，点击删除item
+            Toast.makeText(getActivity(), "position:" + (position), Toast.LENGTH_SHORT).show();
+            View popupView = LayoutInflater.from(getActivity()).inflate(R.layout.layout_pop, null);
+            final PopupWindow popupWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT, true);
+            popupWindow.setBackgroundDrawable(new BitmapDrawable());
+            popupView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+            int popupWidth = popupView.getMeasuredWidth();
+            int popupHeight =  popupView.getMeasuredHeight();
+            int[] location = new int[2];
+            v.getLocationOnScreen(location);
+            popupWindow.showAtLocation(v, Gravity.NO_GRAVITY, (location[0]+v.getWidth()/2)-popupWidth/2,
+                    location[1]-popupHeight+30);
+            Button button=popupView.findViewById(R.id.bt_r);
+            button.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    adapter.delData(position);
+                    popupWindow.dismiss();
+                }
+            });
+        }
+    };
+
+}
