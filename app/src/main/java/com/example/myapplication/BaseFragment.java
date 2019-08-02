@@ -1,5 +1,7 @@
 package com.example.myapplication;
 
+import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -13,10 +15,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.common.BitMatrix;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
@@ -33,7 +38,7 @@ public class BaseFragment extends Fragment {
 
     private ImageView imageView;
     private TextView textView;
-    private Button button;
+    private Button button,button2;
     public static BaseFragment newInstance(String info) {
         Bundle args = new Bundle();
         BaseFragment fragment = new BaseFragment();
@@ -45,14 +50,21 @@ public class BaseFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.activity_main, null);
+        final View view = inflater.inflate(R.layout.activity_main, null);
         imageView = view.findViewById(R.id.imageView);
         textView=view.findViewById(R.id.editText);
         button =view.findViewById(R.id.button2);
+        button2 =view.findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onCreateQRcode(v);
+            }
+        });
+        button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onScanQrcode(v);
             }
         });
         return view;
@@ -165,6 +177,49 @@ public class BaseFragment extends Fragment {
         return bitmap;
     }
 
+        public void onScanQrcode(View v){
+        IntentIntegrator integrator = new IntentIntegrator(getActivity());
+        integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE);
+        integrator.setOrientationLocked(false);
+        integrator.setPrompt("请将二维码放入扫描框中");
+        integrator.setCameraId(0);
+        integrator.setBeepEnabled(false);
+        integrator.initiateScan();
+
+    }
+
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//
+//        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+//        if(result != null) {
+//            if(result.getContents() == null) {
+//                Toast.makeText(getActivity(), "扫码取消！", Toast.LENGTH_LONG).show();
+//            } else {
+//                Toast.makeText(getActivity(), "扫描成功，条码值: " + result.getContents(), Toast.LENGTH_LONG).show();
+//
+//
+////                Intent intent = new Intent(this, ShowResult.class);
+////                intent.putExtra("result",  result.getContents());
+////                startActivity(intent);
+//
+//
+//            }
+//        } else {
+//            super.onActivityResult(requestCode, resultCode, data);
+//        }
+//    }
+
+//    @Override
+//    protected void onResume() {
+//        /**
+//         * 设置为横屏
+//         */
+//        if(getRequestedOrientation()!=ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE){
+//            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+//        }
+//        super.onResume();
+//    }
 
 
 }

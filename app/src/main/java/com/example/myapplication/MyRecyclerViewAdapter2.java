@@ -68,6 +68,7 @@ public class MyRecyclerViewAdapter2 extends RecyclerView.Adapter<MyRecyclerViewA
     }
 
 
+
     public void addData(int position,event data) {
 //      在list中添加数据，并通知条目加入一条,这里要改
         //这里应该先从数据库中分页获取event
@@ -79,6 +80,11 @@ public class MyRecyclerViewAdapter2 extends RecyclerView.Adapter<MyRecyclerViewA
         notifyItemInserted(position);
     }
 
+    public void delAll() {
+        int count=getItemCount();
+        list.clear();
+        notifyItemRangeRemoved(0,count);
+    }
 
     public void delData(int position) {
 //      在list中添加数据，并通知条目加入一条,这里要改
@@ -87,8 +93,8 @@ public class MyRecyclerViewAdapter2 extends RecyclerView.Adapter<MyRecyclerViewA
         //添加动画
         notifyItemRemoved(position);
         notifyItemRangeChanged(position,list.size());
-
     }
+
 
 
 

@@ -86,7 +86,7 @@ public class BaseFragment3 extends Fragment {
     private ArrayList<event> list = new ArrayList<event>();
     //自定义recyclerveiw的适配器
     private MyRecyclerViewAdapter2 adapter;
-
+    private int page;
     private DatabaseHelper dbHelper;
     private SQLiteDatabase db;
 
@@ -107,7 +107,9 @@ public class BaseFragment3 extends Fragment {
         recyclerView =view.findViewById(R.id.recyclerView2);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(),LinearLayoutManager.VERTICAL,false));//控制布局为LinearLayout或者是GridView或者是瀑布流布局
         adapter = new MyRecyclerViewAdapter2(list,getActivity());
-        recyclerView.setAdapter(adapter);
+        adapter.delAll();
+        initData();
+        recyclerView.setAdapter(adapter);//initData()写在这个前面或者后面???
         adapter.setOnItemClickListener(MyItemClickListener);
         RefreshLayout refreshLayout = view.findViewById(R.id.refreshLayout);
         refreshLayout.setRefreshHeader(new MaterialHeader(getActivity()));
@@ -115,6 +117,8 @@ public class BaseFragment3 extends Fragment {
         refreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(RefreshLayout refreshlayout) {
+                adapter.delAll();
+                initData();
                 refreshlayout.finishRefresh();//传入false表示刷新失败
                 Toast.makeText(getActivity(),"已刷新",Toast.LENGTH_SHORT).show();
             }
@@ -122,16 +126,12 @@ public class BaseFragment3 extends Fragment {
         refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
             @Override
             public void onLoadMore(RefreshLayout refreshlayout) {
-                adapter.addData(list.size(),new event(0,"待办事项1","2019-08-01 15:48:00",1,1,""));
-                adapter.addData(list.size(),new event(0,"待办事项2","2019-08-01 15:48:00",1,1,""));
-                adapter.addData(list.size(),new event(0,"待办事项3","2019-08-01 15:48:00",2,1,""));
-                adapter.addData(list.size(),new event(0,"待办事项4","2019-08-01 15:48:00",2,1,""));
-                adapter.addData(list.size(),new event(0,"待办事项5","2019-08-01 15:48:00",2,1,""));
-                adapter.addData(list.size(),new event(0,"待办事项6","2019-08-01 15:48:00",1,1,""));
-                adapter.addData(list.size(),new event(0,"待办事项7","2019-08-01 15:48:00",1,1,""));
-                adapter.addData(list.size(),new event(0,"待办事项8","2019-08-01 15:48:00",1,1,""));
-                Toast.makeText(getActivity(),"已加载",Toast.LENGTH_SHORT).show();
-                refreshlayout.finishLoadMore();//传入false表示加载失败
+                if(loadMore()) {
+                    //Toast.makeText(getActivity(),"已加载",Toast.LENGTH_SHORT).show();
+                    refreshlayout.finishLoadMore();//传入false表示加载失败
+                }else{
+                    refreshlayout.finishLoadMoreWithNoMoreData();
+                }
             }
         });
 
@@ -139,6 +139,55 @@ public class BaseFragment3 extends Fragment {
     }
 
 
+    private boolean loadMore() {
+        page=page+1;
+        String page1=page*10+"";
+        String page2=(page+1)*10+"";
+        Cursor cursor =db.rawQuery("select * from event order by id desc limit ?,?",new String[]{page1,page2});
+        if(cursor.getCount()==0){ //返回值为空
+            Toast.makeText(getActivity(), "到底了" , Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        while(cursor.moveToNext())
+        {
+            int id  = cursor.getInt(cursor.getColumnIndex("id"));
+            String name = cursor.getString(cursor.getColumnIndex("name"));
+            String date = cursor.getString(cursor.getColumnIndex("date"));
+            int state = cursor.getInt(cursor.getColumnIndex("state"));
+            int level = cursor.getInt(cursor.getColumnIndex("level"));
+            Log.e("id:",id+"");
+            event e=new event(id,name,date,state,level,"");
+            list.add(e);
+            adapter.addData(list.size()-1,e);
+        }
+        cursor.close();
+        return true;
+    }
+
+    private void initData() {
+        //这里应该先从数据库获取数据，然后list.add
+        list = new ArrayList<>();
+        page=0;
+        //select * from yourtable where 查询条件 order by id desc limit 0,10;
+        String page1=page*10+"";
+        String page2=(page+1)*10+"";
+        Cursor cursor1 =db.rawQuery("select * from event order by id desc ",new String[]{});
+        Log.e("总数为：",cursor1.getCount()+"");
+        cursor1.close();
+        Cursor cursor =db.rawQuery("select * from event order by id desc limit ?,?",new String[]{page1,page2});
+        while(cursor.moveToNext())
+        {
+            int id  = cursor.getInt(cursor.getColumnIndex("id"));
+            String name = cursor.getString(cursor.getColumnIndex("name"));
+            String date = cursor.getString(cursor.getColumnIndex("date"));
+            int state = cursor.getInt(cursor.getColumnIndex("state"));
+            int level = cursor.getInt(cursor.getColumnIndex("level"));
+            event e=new event(id,name,date,state,level,"");
+            list.add(e);
+            adapter.addData(list.size()-1,e);
+        }
+        cursor.close();
+    }
 
     public void check(){
         Cursor cursor =db.rawQuery("select * from event where level=?",new String[]{"1"});
@@ -155,13 +204,15 @@ public class BaseFragment3 extends Fragment {
 
     }
     public void add(){
-        ContentValues values = new ContentValues();
-        values.put("name","事件名称");
-        values.put("date","2019-08-01 10:08:23");
-        values.put("state",1);
-        values.put("level",1);
-        db.insert("event",null,values);
-
+        for (int i=0;i<20;i++) {
+            ContentValues values = new ContentValues();
+            values.put("name", "事件名称"+i);
+            values.put("date", "2019-08-01 10:08:23");
+            if(i%3==0){values.put("state", 1);}
+            else {values.put("state", 0);}
+            values.put("level", 1);
+            db.insert("event", null, values);
+        }
     }
 
 
@@ -183,7 +234,7 @@ public class BaseFragment3 extends Fragment {
                     startActivity(intent);
                     break;
                 default:
-                    Toast.makeText(getActivity(), "你点击了item按钮" + (position + 1), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "你点击了item按钮" + (position + 1)+",id:"+adapter.getItemData(position).getId(), Toast.LENGTH_SHORT).show();
                     break;
             }
         }

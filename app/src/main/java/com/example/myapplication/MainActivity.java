@@ -25,6 +25,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
+
 import java.io.Console;
 
 
@@ -109,9 +112,9 @@ public class MainActivity extends AppCompatActivity  {
 
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(BaseFragment.newInstance("第一页"));
+        adapter.addFragment(BaseFragment3.newInstance("第一页"));
         adapter.addFragment(BaseFragment2.newInstance("第二页"));
-        adapter.addFragment(BaseFragment3.newInstance("第三页"));
+        adapter.addFragment(BaseFragment.newInstance("第三页"));
 //        adapter.addFragment(BaseFragment.newInstance("第四页"));
         viewPager.setAdapter(adapter);
     }
@@ -151,27 +154,27 @@ public class MainActivity extends AppCompatActivity  {
 //
 //    }
 //
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//
-//        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-//        if(result != null) {
-//            if(result.getContents() == null) {
-//                Toast.makeText(this, "扫码取消！", Toast.LENGTH_LONG).show();
-//            } else {
-//                Toast.makeText(this, "扫描成功，条码值: " + result.getContents(), Toast.LENGTH_LONG).show();
-//
-//
-////                Intent intent = new Intent(this, ShowResult.class);
-////                intent.putExtra("result",  result.getContents());
-////                startActivity(intent);
-//
-//
-//            }
-//        } else {
-//            super.onActivityResult(requestCode, resultCode, data);
-//        }
-//    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if(result != null) {
+            if(result.getContents() == null) {
+                Toast.makeText(this, "扫码取消！", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(this, "扫描成功，条码值: " + result.getContents(), Toast.LENGTH_LONG).show();
+
+
+//                Intent intent = new Intent(this, ShowResult.class);
+//                intent.putExtra("result",  result.getContents());
+//                startActivity(intent);
+
+
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
 //
 //    @Override
 //    protected void onResume() {
