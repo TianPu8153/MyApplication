@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity  {
     private MenuItem menuItem;
     private BottomNavigationView bottomNavigationView;
     private DatabaseHelper dbHelper=new DatabaseHelper(this,"event.db",null,1);
+    private long mPressedTime = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,40 +121,12 @@ public class MainActivity extends AppCompatActivity  {
     }
 
 
-
-
-
-
-
-//
-//    public void onCreateQRcode(View v){
-//        Bitmap bmp= BitmapFactory.decodeResource(getResources(), R.mipmap.logo);
-//
-//        Bitmap bitmap = createQRImage(textView.getText().toString(), 300, 300,bmp, null);
-////        textView.setText("success"+textView);
-//        imageView.setImageBitmap(bitmap);
-//    }
-
     public void onShowList(View v){
 
             Intent intent = new Intent(this, ShowResult.class);
             startActivity(intent);
     }
 
-
-
-
-//    public void onScanQrcode(View v){
-//        IntentIntegrator integrator = new IntentIntegrator(this);
-//        integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE);
-//        integrator.setOrientationLocked(false);
-//        integrator.setPrompt("请将二维码放入扫描框中");
-//        integrator.setCameraId(0);
-//        integrator.setBeepEnabled(false);
-//        integrator.initiateScan();
-//
-//    }
-//
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -175,16 +148,19 @@ public class MainActivity extends AppCompatActivity  {
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
-//
-//    @Override
-//    protected void onResume() {
-//        /**
-//         * 设置为横屏
-//         */
-//        if(getRequestedOrientation()!=ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE){
-//            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-//        }
-//        super.onResume();
-//    }
+
+    @Override
+    public void onBackPressed() {
+        long mNowTime = System.currentTimeMillis();//获取第一次按键时间
+        if((mNowTime - mPressedTime) > 2000){//比较两次按键时间差
+            Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
+            mPressedTime = mNowTime;
+        }
+        else{//退出程序
+            this.finish();
+            System.exit(0);
+        }
+    }
+
 
 }
