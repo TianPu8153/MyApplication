@@ -5,7 +5,9 @@ import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -28,6 +30,8 @@ import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.Map;
+
+import cn.pedant.SweetAlert.SweetAlertDialog;
 
 /**
  * Created by bruce on 2016/11/1.
@@ -58,7 +62,38 @@ public class BaseFragment extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onCreateQRcode(v);
+                final View v1=v;
+                new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE)
+                        .setTitleText("确定生成二维码?")
+                        .setContentText("即将在本页面生成二维码!")
+                        .setConfirmText("确定!")
+                        .setCancelText("取消!")
+                        .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sDialog) {
+                                onCreateQRcode(v1);
+//                                sDialog                          //这种方式也可以，但是没法去掉取消按钮
+//                                        .setTitleText("成功!")
+//                                        .setContentText("所需二维码已经生成!")
+//                                        .setConfirmText("OK")
+//                                        .setConfirmClickListener(null)
+//                                        .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+                                sDialog.hide();
+                                new SweetAlertDialog(getActivity(), SweetAlertDialog.SUCCESS_TYPE)
+                                        .setTitleText("成功!")
+                                        .setContentText("所需二维码已经生成!")
+                                        .setConfirmText("OK")
+                                        .setConfirmClickListener(null)
+                                        .show();
+                            }
+                        })
+                        .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sDialog) {
+                                sDialog.cancel();
+                            }
+                        })
+                        .show();
             }
         });
         button2.setOnClickListener(new View.OnClickListener() {
@@ -78,6 +113,7 @@ public class BaseFragment extends Fragment {
         Bitmap bitmap = createQRImage(textView.getText().toString(), 300, 300,bmp, null);
 //        textView.setText("success"+textView);
         imageView.setImageBitmap(bitmap);
+
     }
 
 
@@ -186,40 +222,10 @@ public class BaseFragment extends Fragment {
         integrator.setBeepEnabled(false);
         integrator.initiateScan();
 
+
+
     }
 
-//    @Override
-//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//
-//        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-//        if(result != null) {
-//            if(result.getContents() == null) {
-//                Toast.makeText(getActivity(), "扫码取消！", Toast.LENGTH_LONG).show();
-//            } else {
-//                Toast.makeText(getActivity(), "扫描成功，条码值: " + result.getContents(), Toast.LENGTH_LONG).show();
-//
-//
-////                Intent intent = new Intent(this, ShowResult.class);
-////                intent.putExtra("result",  result.getContents());
-////                startActivity(intent);
-//
-//
-//            }
-//        } else {
-//            super.onActivityResult(requestCode, resultCode, data);
-//        }
-//    }
-
-//    @Override
-//    protected void onResume() {
-//        /**
-//         * 设置为横屏
-//         */
-//        if(getRequestedOrientation()!=ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE){
-//            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-//        }
-//        super.onResume();
-//    }
 
 
 }
