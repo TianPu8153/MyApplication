@@ -16,10 +16,15 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    packagingOptions {
+        exclude 'META-INF/proguard/androidx-annotations.pro'
+    }
 }
+
 
 repositories {
     mavenCentral()
+    maven { url 'https://jitpack.io' }
 }
 
 
@@ -50,7 +55,9 @@ dependencies {
     //支持WebP静态图
     implementation 'com.facebook.fresco:webpsupport:1.11.0'
 
-    implementation  'com.github.f0ris.sweetalert:library:1.5.1'
+    implementation  'com.github.f0ris.sweetalert:library:1.5.1'//sweetalert
+    implementation  'com.github.PhilJay:MPAndroidChart:v3.1.0'//图表
+
 
 
 }

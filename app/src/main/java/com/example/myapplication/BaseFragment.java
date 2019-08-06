@@ -19,6 +19,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.common.BitMatrix;
@@ -28,10 +33,19 @@ import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
+
+
+
+
+
+
+
+
 
 /**
  * Created by bruce on 2016/11/1.
@@ -39,7 +53,7 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
  */
 
 public class BaseFragment extends Fragment {
-
+    private LineChart chart;
     private ImageView imageView;
     private TextView textView;
     private Button button,button2;
@@ -59,6 +73,35 @@ public class BaseFragment extends Fragment {
         textView=view.findViewById(R.id.editText);
         button =view.findViewById(R.id.button2);
         button2 =view.findViewById(R.id.button);
+
+
+        //图表
+        LineChart chart = view.findViewById(R.id.chart);
+        Description d=new Description();
+        d.setText("图表描述");
+        chart.setDescription(d);
+//        //设置x轴的数据
+//        ArrayList<String> xValues = new ArrayList<>();
+//        for (int i = 0; i < 15; i++) {
+//            xValues.add("" + i);
+//        }
+        //设置y轴的数据
+        ArrayList<Entry> entries  = new ArrayList<>();
+        entries .add(new Entry(1, 5));
+        entries .add(new Entry(2, 4));
+        entries .add(new Entry(3, 3));
+        entries .add(new Entry(4, 1));
+        entries .add(new Entry(5, 3));
+        entries .add(new Entry(6, 5));
+        entries .add(new Entry(7, 7));
+        LineDataSet dataSet = new LineDataSet(entries, "Label"); // add entries to dataset
+        LineData lineData = new LineData(dataSet);
+        chart.setData(lineData);
+        chart.invalidate(); // refresh
+
+
+
+
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
