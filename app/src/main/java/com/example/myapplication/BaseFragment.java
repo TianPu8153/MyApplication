@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
@@ -11,6 +12,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +20,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.support.v7.widget.Toolbar;
+
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Description;
@@ -57,6 +61,10 @@ public class BaseFragment extends Fragment {
     private ImageView imageView;
     private TextView textView;
     private Button button,button2;
+    private Toolbar mToolbar;
+    Activity mActivity;
+    AppCompatActivity mAppCompatActivity;
+
     public static BaseFragment newInstance(String info) {
         Bundle args = new Bundle();
         BaseFragment fragment = new BaseFragment();
@@ -68,11 +76,21 @@ public class BaseFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final View view = inflater.inflate(R.layout.activity_main, null);
+
+        View view = inflater.inflate(R.layout.activity_main,  container, false);
         imageView = view.findViewById(R.id.imageView);
         textView=view.findViewById(R.id.editText);
         button =view.findViewById(R.id.button2);
         button2 =view.findViewById(R.id.button);
+
+
+        super.onViewCreated(view, savedInstanceState);
+        mActivity = getActivity();
+        AppCompatActivity mAppCompatActivity = (AppCompatActivity) mActivity;
+        mToolbar=view.findViewById(R.id.toolbar);
+        mAppCompatActivity.setSupportActionBar(mToolbar);
+
+
 
 
         //图表

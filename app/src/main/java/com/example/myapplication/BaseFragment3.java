@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -9,6 +10,8 @@ import android.graphics.Canvas;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -74,8 +77,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by bruce on 2016/11/1.
- * BaseFragment
+ * Created by tianpu81533 on 2019/8/1.
+ * BaseFragment 主要使用的框架及实现的功能
+ * recyclerveiw 自定义列表，下拉刷新，上拉加载
+ * FloatingSearchView 搜索框(配合列表)
+ * database 数据库
  */
 
 public class BaseFragment3 extends Fragment {
@@ -89,6 +95,9 @@ public class BaseFragment3 extends Fragment {
     private int page;
     private DatabaseHelper dbHelper;
     private SQLiteDatabase db;
+    private Toolbar mToolbar;
+    Activity mActivity;
+    AppCompatActivity mAppCompatActivity;
 
     public static BaseFragment3 newInstance(String info) {
         Bundle args = new Bundle();
@@ -102,6 +111,19 @@ public class BaseFragment3 extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_db, null);
+
+
+
+
+
+
+        super.onViewCreated(view, savedInstanceState);
+        mActivity = getActivity();
+        AppCompatActivity mAppCompatActivity = (AppCompatActivity) mActivity;
+        mToolbar=view.findViewById(R.id.toolbar);
+        mAppCompatActivity.setSupportActionBar(mToolbar);
+
+
         dbHelper=new DatabaseHelper(getActivity(),"event.db",null,1);
         db=dbHelper.getReadableDatabase();
         recyclerView =view.findViewById(R.id.recyclerView2);

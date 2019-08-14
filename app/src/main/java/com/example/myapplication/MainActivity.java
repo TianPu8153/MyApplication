@@ -13,6 +13,7 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,6 +22,7 @@ import android.view.View;
 import android.content.Intent;
 
 
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,15 +43,19 @@ public class MainActivity extends AppCompatActivity  {
     private BottomNavigationView bottomNavigationView;
     private DatabaseHelper dbHelper=new DatabaseHelper(this,"event.db",null,1);
     private long mPressedTime = 0;
-
+    private Toolbar mToolbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
+        supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main2);
         imageView = this.findViewById(R.id.imageView);
         //textView=this.findViewById(R.id.editText);
         textView=this.findViewById(R.id.textView2);
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        viewPager = this.findViewById(R.id.viewpager);
+
+
         bottomNavigationView = (BottomNavigationView) findViewById(R.id.navigation);
         //默认 >3 的选中效果会影响ViewPager的滑动切换时的效果，故利用反射去掉
         //BottomNavigationViewHelper.disableShiftMode(bottomNavigationView);
