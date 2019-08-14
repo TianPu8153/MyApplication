@@ -16,6 +16,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
     packagingOptions {
         exclude 'META-INF/proguard/androidx-annotations.pro'
     }
@@ -60,6 +64,8 @@ dependencies {
     implementation  'com.github.f0ris.sweetalert:library:1.5.1'//sweetalert
     implementation  'com.github.PhilJay:MPAndroidChart:v3.1.0'//图表
     implementation 'com.github.arimorty:floatingsearchview:2.1.1' //浮动搜索框
+    implementation 'com.wenwenwen888:searchbox:1.0.1'//搜索框
+
 
 
 

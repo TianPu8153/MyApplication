@@ -71,6 +71,8 @@ import com.google.zxing.EncodeHintType;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+import com.wyt.searchbox.SearchFragment;
+import com.wyt.searchbox.custom.IOnSearchClickListener;
 
 import java.io.FileOutputStream;
 import java.util.HashMap;
@@ -80,7 +82,7 @@ import java.util.Map;
  * Created by tianpu81533 on 2019/8/1.
  * BaseFragment 主要使用的框架及实现的功能
  * recyclerveiw 自定义列表，下拉刷新，上拉加载
- * FloatingSearchView 搜索框(配合列表)
+ * searchbox 搜索框(配合列表)
  * database 数据库
  */
 
@@ -112,16 +114,25 @@ public class BaseFragment3 extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_db, null);
 
+        //super.onViewCreated(view, savedInstanceState);
+        SearchFragment searchFragment = SearchFragment.newInstance();
 
-
-
-
-
-        super.onViewCreated(view, savedInstanceState);
         mActivity = getActivity();
-        AppCompatActivity mAppCompatActivity = (AppCompatActivity) mActivity;
         mToolbar=view.findViewById(R.id.toolbar);
+        AppCompatActivity mAppCompatActivity = (AppCompatActivity) mActivity;
         mAppCompatActivity.setSupportActionBar(mToolbar);
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchFragment.showFragment(mAppCompatActivity.getSupportFragmentManager(),SearchFragment.TAG);
+
+            }
+        });
+
+
+
+//        mToolbar=view.findViewById(R.id.toolbar);
+//        mAppCompatActivity.setSupportActionBar(mToolbar);
 
 
         dbHelper=new DatabaseHelper(getActivity(),"event.db",null,1);
@@ -130,7 +141,9 @@ public class BaseFragment3 extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(),LinearLayoutManager.VERTICAL,false));//控制布局为LinearLayout或者是GridView或者是瀑布流布局
         adapter = new MyRecyclerViewAdapter2(list,getActivity());
         adapter.delAll();
-        initData();
+//        add();
+        initData("");
+
         recyclerView.setAdapter(adapter);//initData()写在这个前面或者后面???
         adapter.setOnItemClickListener(MyItemClickListener);
         RefreshLayout refreshLayout = view.findViewById(R.id.refreshLayout);
@@ -140,7 +153,7 @@ public class BaseFragment3 extends Fragment {
             @Override
             public void onRefresh(RefreshLayout refreshlayout) {
                 adapter.delAll();
-                initData();
+                initData("");
                 refreshlayout.finishRefresh();//传入false表示刷新失败
                 Toast.makeText(getActivity(),"已刷新",Toast.LENGTH_SHORT).show();
             }
@@ -156,7 +169,16 @@ public class BaseFragment3 extends Fragment {
                 }
             }
         });
+        searchFragment.setOnSearchClickListener(new IOnSearchClickListener() {
+            @Override
+            public void OnSearchClick(String keyword) {
+                //这里处理逻辑
 
+                initData(keyword);
+                //Toast.makeText(getActivity(), keyword, Toast.LENGTH_SHORT).show();
+
+            }
+        });
         return view;
     }
 
@@ -186,17 +208,31 @@ public class BaseFragment3 extends Fragment {
         return true;
     }
 
-    private void initData() {
+    private void initData(String search) {
+        adapter.delAll();
         //这里应该先从数据库获取数据，然后list.add
         list = new ArrayList<>();
         page=0;
         //select * from yourtable where 查询条件 order by id desc limit 0,10;
         String page1=page*10+"";
         String page2=(page+1)*10+"";
-        Cursor cursor1 =db.rawQuery("select * from event order by id desc ",new String[]{});
-        Log.e("总数为：",cursor1.getCount()+"");
-        cursor1.close();
-        Cursor cursor =db.rawQuery("select * from event order by id desc limit ?,?",new String[]{page1,page2});
+        Cursor cursor;
+//        if(search!=""){
+//            cursor1 =db.rawQuery("select * from event where name="+search+" order by id desc ",new String[]{});
+//        }else{
+//            cursor1 =db.rawQuery("select * from event order by id desc ",new String[]{});
+//        }
+//        Log.e("总数为：",cursor1.getCount()+"");
+//        cursor1.close();
+        if(search!=""){
+            cursor =db.rawQuery("select * from event where name like '%"+search+"%' order by id desc limit ?,?",new String[]{page1,page2});
+        }else{
+            cursor =db.rawQuery("select * from event order by id desc limit ?,? ",new String[]{page1,page2});
+        }
+        //Cursor cursor =db.rawQuery("select * from event order by id desc limit ?,?",new String[]{page1,page2});
+        if (cursor.getCount()== 0){
+            Toast.makeText(getActivity(), "没有数据！", Toast.LENGTH_LONG).show();
+        }
         while(cursor.moveToNext())
         {
             int id  = cursor.getInt(cursor.getColumnIndex("id"));
