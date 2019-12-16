@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -82,7 +83,7 @@ import java.util.Map;
  * Created by tianpu81533 on 2019/8/1.
  * BaseFragment 主要使用的框架及实现的功能
  * recyclerveiw 自定义列表，下拉刷新，上拉加载
- * searchbox 搜索框(配合列表)
+ * searchbox 搜索框(配合列表) 需要改project->searchbox/layout/dialog_search,加<requestFocus />
  * database 数据库
  */
 
@@ -98,6 +99,7 @@ public class BaseFragment3 extends Fragment {
     private DatabaseHelper dbHelper;
     private SQLiteDatabase db;
     private Toolbar mToolbar;
+    private EditText etSearchKeyword;
     Activity mActivity;
     AppCompatActivity mAppCompatActivity;
 

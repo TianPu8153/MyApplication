@@ -2,7 +2,7 @@
     android:id="@+id/toolbar"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
-    android:background="@color/colorPrimaryDark"
+    android:background="@color/background"
     app:title="标题"
     app:titleTextColor="@color/black"
     app:navigationIcon="@mipmap/search"
